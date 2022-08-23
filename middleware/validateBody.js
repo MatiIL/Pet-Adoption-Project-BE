@@ -5,8 +5,10 @@ addFormats(ajv);
 
 function validateBody(schema) {
   return (req, res, next) => {
+    // console.log(req.body);
     const valid = ajv.validate(schema, req.body);
     if (!valid) {
+      console.log('invalid!')
       res.status(400).send(ajv.errors);
       return;
     }
@@ -14,4 +16,4 @@ function validateBody(schema) {
   };
 }
 
-module.exports = {validateBody}
+module.exports = { validateBody }
