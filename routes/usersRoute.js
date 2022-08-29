@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const UsersController = require("../controllers/UsersController");
-const { passwordsMatch, isNewUser, encryptPasswords, doesUserExist, verifyPass } = require("../middleware/usersMiddleware");
+const { passwordsMatch, isNewUser, encryptPasswords, 
+doesUserExist, verifyPass, verifyToken } = require("../middleware/usersMiddleware");
 const  { signUpSchema, loginSchema }  = require('../schemas/allSchemas');
 const { validateBody } = require('../middleware/validateBody');
 
@@ -20,11 +21,16 @@ router.post(
   doesUserExist,
   verifyPass,
   UsersController.login
-)
+);
 
-router.get("/:userId", (req,res) => {
-  console.log(req.body);
+router.get("/logout", UsersController.logout);
 
-})
+router.route("/")
+// .post(validateBody, verifyToken, UsersController.addUser)
+// .get(verifyToken, UsersController.getAllUsers);
+
+router.route("/:userId")
+.get(verifyToken, UsersController.getUserById)
+// .put(validateBody, verifyToken, UsersController.editUser);
 
 module.exports = router;

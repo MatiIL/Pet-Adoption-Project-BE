@@ -1,4 +1,6 @@
-const { signUpModel } = require("../models/usersModel");
+const { signUpModel, getUserByIdModel } = require("../models/usersModel");
+const express = require("express");
+const app = express();
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -14,21 +16,60 @@ async function signUp(req, res) {
       phone
     };
     const userId = await signUpModel(newUser);
-    res.send({ userId: userId, email, firstName });
+    if(userId.error)  {
+      throw new Error(userId.error);
+  }
+    res.send({ userId: userId, email, firstName, lastName });
   } catch (err) {
-    console.log(err);
+    err.statusCode = 500;
+    next(err);
   }
 }
 
 function login(req, res) {
   try {
     const { user } = req.body;
+
     const token = jwt.sign({ id: user.userId }, process.env.TOKEN_SECRET, { expiresIn: "2h" });
-    res.cookie("token", token, { maxAge: 100000000000 });
-    res.send({ user: user.name, ok: true });
+    res.cookie("token", token, {
+      // httpOnly: true,
+    });
+    res.send({ user: user, ok: true });
+    // app.use(
+    //   jwt({
+    //     secret: TOKEN_SECRET,
+    //     getToken: req => req.cookies.token
+    //   })
+    // );
   } catch (err) {
     console.log(err);
   }
 }
 
-module.exports = { signUp, login };
+function logout(req, res) {
+  try {
+    if (req.cookies.token) {
+      res.clearCookie("token");
+      res.send({ ok: true });
+    } else {
+      throw new Error("No cookie to clear");
+    }
+  } catch (err) {
+    console.log(err)
+    res.status(500).send(err);
+  }
+}
+
+async function getUserById(req, res) {
+  try {
+    const { userId } = req.params;
+    const user = await getUserByIdModel({ userId });
+    if(user.error) throw new Error(user.error);
+    else res.send(user);
+  } catch (err) {
+    console.log(err)
+    res.status(500).send(err);
+  }
+}
+
+module.exports = { signUp, login, logout, getUserById };

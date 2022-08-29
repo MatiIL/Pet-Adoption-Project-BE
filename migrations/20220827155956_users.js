@@ -1,5 +1,5 @@
 exports.up = function (knex) {
-    return knex.schema.createTable("users", function (table) {
+    return knex.schema.alterTable("users", function (table) {
       table.increments("userId").primary();
       table.string("firstName");
       table.string("lastName");

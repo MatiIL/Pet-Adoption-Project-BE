@@ -43,35 +43,43 @@ async function doesUserExist(req, res, next) {
 }
 
 async function verifyPass(req, res, next) {
-  const { user } = req.body;
-  bcrypt.compare(req.body.password, user.password, (err, result) => {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    }
+  const { user, password } = req.body;
+  bcrypt.compare(password, user.password, (err, result) => {
     if (result) {
       next();
-      return;
     } else {
-      res.status(400).send("Incorrrect Password!");
+      res.status(400).send("Incorrect Password");
     }
   });
 }
 
-async function authLogin(req, res, next) {
+// async function authLogin(req, res, next) {
+//   try {
+//     const { user, token } = req.body;
+//     res.cookie('token', token, { maxAge: 900000, httpOnly: true, sameSite: 'none', secure: false});
+//     res.send({name: user.firstName, id: user.id,});
+//     next();
+//   } catch (err) {
+//     res.status(500).send(err);
+//   }
+// }
+
+async function verifyToken(req, res, next) {
   const { token } = req.cookies;
+  if (!token) {
+    res.status(401).send("Token Required");
+    return;
+  }
   jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
     if (err) {
-      res.status(401).send("Unauthorized login attempt");
+      res.status(401).send("Invalid Token");
       return;
     }
-    if (decoded) {
-      req.body.userId = decoded.id;
-      next();
-      return;
-    }
+    req.body.userId = decoded.id;
+    next();
   });
 }
+
 
 module.exports = {
   passwordsMatch,
@@ -79,5 +87,5 @@ module.exports = {
   encryptPasswords,
   doesUserExist,
   verifyPass,
-  authLogin,
+  verifyToken
 };
