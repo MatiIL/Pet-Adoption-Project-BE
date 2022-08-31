@@ -2,8 +2,7 @@ const dbConnection = require("../knex/knex");
 
 // async function getAllPetsModel() {
 //     try {
-//         const allPets = fs.readFileSync(pathToPetsDB);
-//         return JSON.parse(allPets);
+//         
 //     }
 //     catch(err) {
 //         console.log(err);
@@ -27,39 +26,25 @@ async function searchPetsModel(petSearchObj) {
     const mostBasicSearch = dbConnection
       .from("pets")
       .modify(function (queryBuilder) {
-        switch (true) {
-          case type == 1 || type == 2:
+        if (type == 1 || type == 2)
             queryBuilder.where("type", type);
-          case status == 1 || status == 2 || status == 3:
+        if (status == 1 || status == 2 || status == 3)
             queryBuilder.where("adoptionStatus", status);
-          case name != "":
+        if (name !== "")
             queryBuilder.where("name", name);
-          case minHeight > 0:
-            queryBuilder.whereBetween("height", [
-              minHeight,
-              dbConnection("pets").max("height"),
-            ]);
-          case maxHeight > 0:
-            queryBuilder.whereBetween("height", [
-              dbConnection("pets").min("height"),
-              maxHeight,
-            ]);
-          case minHeight > 0 && maxHeight > 0:
+        if (minHeight > 0)
+            queryBuilder.whereBetween("height", [minHeight, dbConnection("pets").max("height")]);
+        if (maxHeight > 0)
+            queryBuilder.whereBetween("height", [dbConnection("pets").min("height"), maxHeight]);
+        if (minHeight > 0 && maxHeight > 0)
             queryBuilder.whereBetween("height", [minHeight, maxHeight]);
-          case minWeight > 0:
-            queryBuilder.whereBetween("weight", [
-              minWeight,
-              dbConnection("pets").max("weight"),
-            ]);
-          case maxWeight > 0:
-            queryBuilder.whereBetween("weight", [
-              dbConnection("pets").min("weight"),
-              maxWeight,
-            ]);
-          case minWeight > 0 && maxWeight > 0:
+        if (minWeight > 0)
+            queryBuilder.whereBetween("weight", [minWeight, dbConnection("pets").max("weight")]);
+        if (maxWeight > 0)
+            queryBuilder.whereBetween("weight", [dbConnection("pets").min("weight"), maxWeight]);
+        if (minWeight > 0 && maxWeight > 0)
             queryBuilder.whereBetween("weight", [minWeight, maxWeight]);
-        }
-      });
+        });
     const findPets = await mostBasicSearch;
     return findPets;
   } catch (err) {
@@ -76,4 +61,12 @@ async function getPetByIdModel(petId) {
   }
 }
 
-module.exports = { addPetModel, searchPetsModel, getPetByIdModel };
+async function savePetModel(petId) {
+  
+}
+
+async function removePetModel(petId) {
+  
+}
+
+module.exports = { addPetModel, searchPetsModel, getPetByIdModel, savePetModel, removePetModel };

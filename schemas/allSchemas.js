@@ -1,27 +1,46 @@
 const signUpSchema = {
-    type: "object",
-    properties: {
-      firstName: {type: "string"},
-      lastName: {type: "string"},
-      email: {type: "string"},
-      password: {type: "string", minLength: 2},
-      repeatPassword: {type: "string", minLength: 2},
-      phone: {type: "string"}
-    },
-    required: ["email"],
-    additionalProperties: false
-  }
+  type: "object",
+  properties: {
+    firstName: { type: "string" },
+    lastName: { type: "string" },
+    email: { type: "string" },
+    password: { type: "string", minLength: 2 },
+    repeatPassword: { type: "string", minLength: 2 },
+    phone: { type: "string" },
+  },
+  required: ["email"],
+  additionalProperties: false,
+};
 
-  const loginSchema = {
-    type: "object",
-    properties: {
-      email: {type: "string"},
-      password: {type: "string", minLength: 2},
+const loginSchema = {
+  type: "object",
+  properties: {
+    email: { type: "string" },
+    password: { type: "string", minLength: 2 },
+  },
+  required: ["email", "password"],
+  additionalProperties: false,
+};
 
-    },
-    required: ["email", "password"],
-    additionalProperties: false
+const petSchema = {
+  type: "object",
+  properties: {
+    type: { type: "string" },
+    name: { type: "string", minLength: 2 },
+    adoptionStatus: { type: "string" },
+    height: { type: "string" },
+    weight: { type: "string" },
+    dietary: { type: "string", minLength: 2 },
+    breed: { type: "string" },
+    color: { type: "string" },
+    hypoallergenic: { type: "string" },
+    bio: { type: "string", minLength: 2 },
+    imageUrl: { type: "string"},
+  },
+    required: ["type", "name", "adoptionStatus", "imageUrl", "height", "weight", "dietary", "breed", "color", "hypoallergenic", "bio"],
+  additionalProperties: true,
+  };
 
-  }
 
-  module.exports = { signUpSchema, loginSchema }
+
+module.exports = { signUpSchema, loginSchema, petSchema };

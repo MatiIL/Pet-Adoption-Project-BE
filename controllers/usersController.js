@@ -1,6 +1,4 @@
 const { signUpModel, getUserByIdModel } = require("../models/usersModel");
-const express = require("express");
-const app = express();
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -29,18 +27,13 @@ async function signUp(req, res) {
 function login(req, res) {
   try {
     const { user } = req.body;
-
     const token = jwt.sign({ id: user.userId }, process.env.TOKEN_SECRET, { expiresIn: "2h" });
-    res.cookie("token", token, {
-      // httpOnly: true,
-    });
-    res.send({ user: user, ok: true });
-    // app.use(
-    //   jwt({
-    //     secret: TOKEN_SECRET,
-    //     getToken: req => req.cookies.token
-    //   })
-    // );
+    res.cookie("token", token, { maxAge: 900000, httpOnly: true});
+      // sameSite: 'none', 
+      // secure: false, 
+      // signed: true,
+     
+    res.send({ user: user.firstName, ok: true });
   } catch (err) {
     console.log(err);
   }

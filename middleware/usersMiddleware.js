@@ -65,7 +65,8 @@ async function verifyPass(req, res, next) {
 // }
 
 async function verifyToken(req, res, next) {
-  const { token } = req.cookies;
+  const { token } = req.cookies; //token is undefined
+  console.log(token);
   if (!token) {
     res.status(401).send("Token Required");
     return;

@@ -2,6 +2,8 @@ const {
   addPetModel,
   searchPetsModel,
   getPetByIdModel,
+  savePetModel,
+  removePetModel
 } = require("../models/petsModel");
 
 // async function getAllPets(req, res) {
@@ -64,8 +66,8 @@ async function getSearchedPets(req, res) {
       minWeight: minWeight,
       maxWeight: maxWeight,
     };
-    console.log(req.headers);
-    console.log(req.cookies);
+    // console.log(req.headers);
+    // console.log(req.cookies);
     const findPets = await searchPetsModel(petSearchObj);
     res.send(findPets);
   } catch (err) {
@@ -85,4 +87,33 @@ async function getPetById(req, res) {
   }
 }
 
-module.exports = { addPet, getSearchedPets, getPetById };
+async function savePet(req, res) {
+  try {
+    petId = req.params;
+    const savePet = await savePetModel(petId);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+  }
+}
+
+async function removePet(req, res) {
+  try {
+    petId = req.params;
+    const removePet = await removePetModel(petId);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+  }
+}
+
+async function takePet(req, res) {
+  try {
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+  }
+}
+
+module.exports = { addPet, getSearchedPets, getPetById, savePet, removePet, takePet };

@@ -6,7 +6,6 @@ const upload = multer({ dest: "./images" });
 
 const imageUrl = (req, res, next) => {
   try {
-    console.log(req.body);
     const imageUrl = "http://localhost:8080/pets" + req.file.path;
     req.body.petImageURL = imageUrl;
     next();
