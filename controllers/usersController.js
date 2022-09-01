@@ -4,11 +4,10 @@ require("dotenv").config();
 
 async function signUp(req, res) {
   try {
-    const { email, password, repeatPassword, firstName, lastName, phone } = req.body;
+    const { email, password, firstName, lastName, phone } = req.body;
     const newUser = {
       email,
       password,
-      repeatPassword,
       firstName,
       lastName,
       phone
@@ -28,12 +27,17 @@ function login(req, res) {
   try {
     const { user } = req.body;
     const token = jwt.sign({ id: user.userId }, process.env.TOKEN_SECRET, { expiresIn: "2h" });
-    res.cookie("token", token, { maxAge: 900000, httpOnly: true});
+    res.cookie("token", token, { 
+      maxAge: 900000, 
+      httpOnly: true,
       // sameSite: 'none', 
       // secure: false, 
-      // signed: true,
-     
-    res.send({ user: user.firstName, ok: true });
+      
+    });
+
+    const safeUserObj = Object.assign({...user});
+    delete safeUserObj.password;
+    res.send({ user: safeUserObj, ok: true });
   } catch (err) {
     console.log(err);
   }
@@ -56,11 +60,11 @@ function logout(req, res) {
 async function getUserById(req, res) {
   try {
     const { userId } = req.params;
-    const user = await getUserByIdModel({ userId });
+    const user = await getUserByIdModel(userId);
     if(user.error) throw new Error(user.error);
     else res.send(user);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).send(err);
   }
 }

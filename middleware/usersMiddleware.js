@@ -53,20 +53,8 @@ async function verifyPass(req, res, next) {
   });
 }
 
-// async function authLogin(req, res, next) {
-//   try {
-//     const { user, token } = req.body;
-//     res.cookie('token', token, { maxAge: 900000, httpOnly: true, sameSite: 'none', secure: false});
-//     res.send({name: user.firstName, id: user.id,});
-//     next();
-//   } catch (err) {
-//     res.status(500).send(err);
-//   }
-// }
-
 async function verifyToken(req, res, next) {
-  const { token } = req.cookies; //token is undefined
-  console.log(token);
+  const { token } = req.cookies; 
   if (!token) {
     res.status(401).send("Token Required");
     return;

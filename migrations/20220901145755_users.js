@@ -6,7 +6,6 @@ exports.up = function (knex) {
       table.string("phone");
       table.string("email").unique().notNull();
       table.string("password").notNull();
-      table.string("repeatPassword").notNull();
       table.timestamp("created_at").defaultTo(knex.fn.now());
     });
   };

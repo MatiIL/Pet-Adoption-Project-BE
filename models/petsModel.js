@@ -61,12 +61,57 @@ async function getPetByIdModel(petId) {
   }
 }
 
-async function savePetModel(petId) {
+async function savePetModel(savedPetObj) {
+  try {
+    const { petId, userId } = savedPetObj;
+    console.log(petId, userId)
+    const [savedId] = await dbConnection.from('users_pet_list').insert(savedPetObj);
+    return savedId;
+  } catch (err) {
+    console.log(err);
+  }
   
 }
 
-async function removePetModel(petId) {
-  
+async function removePetModel(removedPetObj) {
+  try {
+    const { petId, userId } = removedPetObj;
+    const removedSavedId = await dbConnection.from('users_pet_list').where('petId', petId).andWhere('userId', userId).del();
+    return removedSavedId;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-module.exports = { addPetModel, searchPetsModel, getPetByIdModel, savePetModel, removePetModel };
+async function adoptOrFosterModel(changeReqDetails) {
+  try {
+    const { userId, userAction, petId } = changeReqDetails;
+    const changeStatusQuery = dbConnection
+      .from("pets")
+      .modify(function (queryBuilder) {
+        if (userAction === 'Adopt' ) {
+        queryBuilder.where('petId', petId).update('ownerId', userId).update('adoptionStatus', '3');
+        }
+        if (userAction === 'Foster' )
+        queryBuilder.where('petId', petId).update('ownerId', userId).update('adoptionStatus', '2');
+      });
+
+    const petStatusChange = await changeStatusQuery;
+    return petStatusChange;
+
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function returnPetModel(req) {
+  try {
+  const { petId } = req.params;
+  const petToAvailableStatus = await dbConnection.from('pets').where('petId', parseInt(petId)).update('ownerId', null).update('adoptionStatus', '1');
+    return petToAvailableStatus;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+module.exports = { addPetModel, searchPetsModel, getPetByIdModel, savePetModel, removePetModel, adoptOrFosterModel, returnPetModel };

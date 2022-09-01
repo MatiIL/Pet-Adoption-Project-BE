@@ -4,19 +4,19 @@ const PetsController = require('../controllers/PetsController');
 const { validateBody } = require('../middleware/validateBody');
 const { petSchema } = require('../schemas/allSchemas');
 const { upload, uploadToCloudinary } = require('../middleware/imagesMiddleware');
-// const { verifyToken } = require('../middleware/usersMiddleware');
+const { verifyToken } = require('../middleware/usersMiddleware');
 
-
-router.post('/', upload.single("picture"), uploadToCloudinary, validateBody(petSchema), PetsController.addPet); //verifyAdminToken
+router.post('/', verifyToken, upload.single("picture"), uploadToCloudinary, validateBody(petSchema), PetsController.addPet); //verifyAdminToken
 router.get('/search', PetsController.getSearchedPets);
 router.get('/:petId', PetsController.getPetById);
-router.post('/save/:petId', PetsController.savePet); //verifyToken
-router.delete('/save/:petId', PetsController.removePet); //verifyToken
-router.post('/take/:petId', validateBody(petSchema), PetsController.takePet); //verifyToken, isFormerAdopter
+router.post('/:petId/save', verifyToken, PetsController.savePet); 
+router.delete('/:petId/remove', verifyToken, PetsController.removePet); 
+router.post('/adopt/:petId', verifyToken, PetsController.adoptOrFoster); //isPetAdopted
+router.post('/return/:petId', verifyToken, PetsController.returnPet);
 
 // router.get('/mypets/:userId', verifyToken, PetsController.getMyPets);
 
-// router.post('/return/:petId', validateBody(petSchema), verifyToken, PetsController.returnPet);
+
 
 
 
