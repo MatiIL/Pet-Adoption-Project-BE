@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const UsersController = require("../controllers/UsersController");
-const { passwordsMatch, isNewUser, encryptPasswords, 
-doesUserExist, verifyPass, verifyToken } = require("../middleware/usersMiddleware");
-const  { signUpSchema, loginSchema }  = require('../schemas/allSchemas');
+const { passwordsMatch, isNewUser, hashPasswords, 
+doesUserExist, verifyPass, verifyToken, didEmailChange, didPassChange } = require("../middleware/usersMiddleware");
+const  { signUpSchema, loginSchema, updateUserSchema }  = require('../schemas/allSchemas');
 const { validateBody } = require('../middleware/validateBody');
 
 router.post(
@@ -11,7 +11,7 @@ router.post(
   validateBody(signUpSchema),
   passwordsMatch,
   isNewUser,
-  encryptPasswords,
+  hashPasswords,
   UsersController.signUp
 );
 
@@ -25,14 +25,21 @@ router.post(
 
 router.get("/logout", UsersController.logout);
 
-// router.get("/:userId", verifyToken, UsersController.getUserById);
+router.get("/", verifyToken, UsersController.identifyUser);
 
 // router.route("/")
 // .post(validateBody, verifyToken, UsersController.addUser)
-// .get(verifyToken, UsersController.getAllUsers);
-// router.get("/:userId", verifyToken, isAdmin, UsersController.getUserById);
 
-// router.route("/:userId")
-// .put(validateBody, verifyToken, UsersController.editUser);
+router.get("/:userId/full", verifyToken, UsersController.getFullUser); //isAdmin
+
+
+router.put("/:userId", 
+verifyToken, 
+validateBody(updateUserSchema), 
+didEmailChange,
+didPassChange,
+UsersController.editUser);
+
+router.get("/all-users", verifyToken, UsersController.getAllUsers);
 
 module.exports = router;

@@ -13,11 +13,8 @@ router.post('/:petId/save', verifyToken, PetsController.savePet);
 router.delete('/:petId/remove', verifyToken, PetsController.removePet); 
 router.post('/adopt/:petId', verifyToken, PetsController.adoptOrFoster); //isPetAdopted
 router.post('/return/:petId', verifyToken, PetsController.returnPet);
-
-// router.get('/mypets/:userId', verifyToken, PetsController.getMyPets);
-
-
-
-
+router.get('/mypets/:userId', verifyToken, PetsController.getUserPets);
+router.get('/', verifyToken, PetsController.getAllPets);
+router.put('/:petId', verifyToken, upload.single("picture"), uploadToCloudinary, validateBody(petSchema), PetsController.editPet) //verifyAdminToken
 
 module.exports = router;

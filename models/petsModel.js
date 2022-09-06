@@ -114,4 +114,35 @@ async function returnPetModel(req) {
   }
 }
 
-module.exports = { addPetModel, searchPetsModel, getPetByIdModel, savePetModel, removePetModel, adoptOrFosterModel, returnPetModel };
+async function getUserPetsModel(userId) {
+  try {
+    const ownedPets = await dbConnection.select('*').from('pets').where({'ownerId': userId});
+    const savedPets = await dbConnection.from('users_pet_list').join('pets', 'users_pet_list.petId', 'pets.petId').where({'users_pet_list.userId': userId});
+    return [ownedPets, savedPets];
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function getAllPetsModel() {
+  try {
+    const allPets = await dbConnection.select('*').from('pets');
+    return allPets;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function editPetModel(numPetId, newPetDetails) {
+  try {
+    console.log(numPetId, newPetDetails)
+    const updatedPet = await dbConnection.from('pets').where('petId', numPetId).update(newPetDetails);
+    console.log(updatedPet)
+    return updatedPet;
+  }
+  catch (err) {
+    console.log(err);
+  }
+}
+
+module.exports = { addPetModel, searchPetsModel, getPetByIdModel, savePetModel, removePetModel, adoptOrFosterModel, returnPetModel, getUserPetsModel, getAllPetsModel, editPetModel };

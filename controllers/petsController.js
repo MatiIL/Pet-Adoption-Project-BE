@@ -1,22 +1,15 @@
 const {
+  getAllPetsModel,
   addPetModel,
   searchPetsModel,
   getPetByIdModel,
   savePetModel,
   removePetModel,
   adoptOrFosterModel,
-  returnPetModel
+  returnPetModel,
+  getUserPetsModel,
+  editPetModel
 } = require("../models/petsModel");
-
-// async function getAllPets(req, res) {
-//     try {
-//         const allPets = getAllPetsModel();
-//         res.send(allPets);
-//     }
-//     catch(err) {
-//         res.status(500).send(err);
-//     }
-// }
 
 async function addPet(req, res) {
   try {
@@ -51,7 +44,7 @@ async function addPet(req, res) {
     if (petId.error) {
       throw new Error(petId.error);
     }
-    res.send( {ok: true });
+    res.send({ ok: true });
   } catch (err) {
     res.status(500).send(err);
   }
@@ -96,13 +89,13 @@ async function savePet(req, res) {
     const { petId } = req.params;
     const savedPetObj = {
       userId: userId,
-      petId: parseInt(petId)
-    }
+      petId: parseInt(petId),
+    };
     const savePet = await savePetModel(savedPetObj);
     if (savePet.error) {
       throw new Error(savePet.error);
     }
-    res.send( {ok: true });
+    res.send({ ok: true });
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message);
@@ -115,8 +108,8 @@ async function removePet(req, res) {
     const userId = req.body.userId;
     const removedPetObj = {
       userId: userId,
-      petId: parseInt(petId)
-    }
+      petId: parseInt(petId),
+    };
     const removePet = await removePetModel(removedPetObj);
     if (removePet.error) {
       throw new Error(removePet.error);
@@ -135,8 +128,8 @@ async function adoptOrFoster(req, res) {
     const changeReqDetails = {
       userId: userId,
       userAction: action,
-      petId: petId
-    }
+      petId: petId,
+    };
     const changeStatus = await adoptOrFosterModel(changeReqDetails);
     if (changeStatus.error) {
       throw new Error(changeStatus.error);
@@ -153,11 +146,91 @@ async function returnPet(req, res) {
     if (returnedPet.error) {
       throw new Error(returnedPet.error);
     }
-
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message);
   }
 }
 
-module.exports = { addPet, getSearchedPets, getPetById, savePet, removePet, adoptOrFoster, returnPet };
+async function getUserPets(req, res) {
+  try {
+    const { userId } = req.body;
+    if (userId) {
+    const allUserPets = await getUserPetsModel(userId);
+    res.send(allUserPets);
+    if (allUserPets.error) {
+      throw new Error(allUserPets.error);
+    }
+  }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+  }
+}
+
+async function getAllPets(req, res) {
+    try {
+        const allPets = await getAllPetsModel();
+        if (allPets.error) {
+          throw new Error(allPets.error);
+        }
+        res.send(allPets);
+    }
+    catch(err) {
+        res.status(500).send(err);
+    }
+}
+
+async function editPet(req, res) {
+  const {petId} = req.params;
+  const numPetId = parseInt(petId);
+  try {
+    const {
+      type,
+      name,
+      adoptionStatus,
+      imageUrl,
+      height,
+      weight,
+      dietary,
+      breed,
+      color,
+      hypoallergenic,
+      bio,
+    } = req.body;
+    const isHypo = hypoallergenic === "true" ? 1 : 0;
+    const newPetDetails = {
+      type: type,
+      name: name,
+      adoptionStatus: adoptionStatus,
+      picture: imageUrl,
+      height: height,
+      weight: weight,
+      dietary: dietary,
+      breed: breed,
+      color: color,
+      hypoallergenic: isHypo,
+      bio: bio,
+    };
+    const editPet = await editPetModel(numPetId, newPetDetails);
+    if (editPet.error) {
+      throw new Error(editPet.error);
+    }
+    res.send({ ok: true });
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
+module.exports = {
+  getAllPets,
+  addPet,
+  getSearchedPets,
+  getPetById,
+  savePet,
+  removePet,
+  adoptOrFoster,
+  returnPet,
+  getUserPets,
+  editPet
+};
