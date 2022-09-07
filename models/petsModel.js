@@ -135,7 +135,6 @@ async function getAllPetsModel() {
 
 async function editPetModel(numPetId, newPetDetails) {
   try {
-    console.log(numPetId, newPetDetails)
     const updatedPet = await dbConnection.from('pets').where('petId', numPetId).update(newPetDetails);
     console.log(updatedPet)
     return updatedPet;

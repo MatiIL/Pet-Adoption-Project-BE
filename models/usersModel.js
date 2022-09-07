@@ -29,17 +29,6 @@ async function getUserByEmailModel(email) {
     }
   }
 
-  // async function getUserPassword(userId) {
-  //   try {
-  //     const userPassword = await dbConnection.column("password").select().from("users").where("userId", userId);
-  //     console.log(userPassword);
-
-  //   } catch (err) {
-  //     console.log(err);
-  //     return { error: err };
-  //   }
-  // }
-
   async function emailComparator(userId, email) {
     try {
       const [emailUnchanged] = await dbConnection.from("users").where("userId", userId).andWhere("email", email);
@@ -77,6 +66,15 @@ async function getUserByEmailModel(email) {
       console.log(err);
     }
   }
+
+  async function queryRolesDB(userId) {
+    try {
+      const [user] = await dbConnection.from("RBAC_table").where('userId', userId).andWhere('admin', true);
+      return user;
+    } catch (err) {
+      err.statusCode = 500;
+  }
+}
   
   
-  module.exports = { getUserByEmailModel, signUpModel, getUserByIdModel, emailComparator, updateUserModel, getAllUsersModel };
+  module.exports = { getUserByEmailModel, signUpModel, getUserByIdModel, emailComparator, updateUserModel, getAllUsersModel, queryRolesDB };

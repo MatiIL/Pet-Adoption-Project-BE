@@ -60,23 +60,22 @@ function logout(req, res) {
     }
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
   }
 }
 
-async function identifyUser(req, res) {
+async function authUser(req, res) {
   try {
-    const { userId } = req.body;
+    const { userId, isAdmin } = req.body;
     const user = await getUserByIdModel(userId);
     if (user.error) throw new Error(user.error);
     else {
       const safeUserObj = Object.assign({ ...user });
       delete safeUserObj.password;
+      safeUserObj.isAdmin = isAdmin;
       res.send(safeUserObj);
     }
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
   }
 }
 
@@ -102,7 +101,6 @@ async function editUser(req, res) {
     }
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
   }
 }
 
@@ -118,7 +116,6 @@ async function getUserById(req, res) {
     }
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
   }
 }
 
@@ -129,7 +126,6 @@ async function getAllUsers(req, res) {
     else res.send(allUsers);
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
   }
 }
 
@@ -150,7 +146,6 @@ async function getFullUser(req, res) {
     }
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
   }
 }
 
@@ -159,7 +154,7 @@ module.exports = {
   login,
   logout,
   getUserById,
-  identifyUser,
+  authUser,
   editUser,
   getAllUsers,
   getFullUser,
