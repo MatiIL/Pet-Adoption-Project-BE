@@ -116,6 +116,24 @@ async function didPassChange(req, res, next) {
 }
 
 async function isAdmin(req, res, next) {
+  const { userId } = req.body.user;
+  try {
+    const isUser = await queryRolesDB(userId);
+      if (isUser === undefined) {
+        req.body.isAdmin = false;
+        next();
+        return;
+      } else {
+        req.body.isAdmin = isUser.admin;
+        next();
+      }
+    } catch (err) {
+    err.statusCode = 500;
+    next(err);
+  }
+}
+
+async function authAdmin(req, res, next) {
   const { userId } = req.body;
   try {
     const isUser = await queryRolesDB(userId);
@@ -162,5 +180,6 @@ module.exports = {
   didEmailChange,
   didPassChange,
   isAdmin,
+  authAdmin,
   isReqAuthorized
 };

@@ -30,8 +30,9 @@ async function signUp(req, res) {
 
 function login(req, res) {
   try {
-    const { user } = req.body;
-    const token = jwt.sign({ id: user.userId }, process.env.TOKEN_SECRET, {
+    const { user, isAdmin } = req.body;
+    const { userId } = req.body.user;
+    const token = jwt.sign({ id: userId }, process.env.TOKEN_SECRET, {
       expiresIn: "2h",
     });
     res.cookie("token", token, {
@@ -42,7 +43,7 @@ function login(req, res) {
       // secure: true,
     });
 
-    const safeUserObj = Object.assign({ ...user });
+    const safeUserObj = Object.assign({ ...user, isAdmin });
     delete safeUserObj.password;
     res.send({ user: safeUserObj, ok: true });
   } catch (err) {
