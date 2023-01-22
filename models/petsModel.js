@@ -1,14 +1,5 @@
 const dbConnection = require("../knex/knex");
 
-// async function getAllPetsModel() {
-//     try {
-//         
-//     }
-//     catch(err) {
-//         console.log(err);
-//     }
-// }
-
 async function addPetModel(newPet) {
   try {
     const [petId] = await dbConnection.from("pets").insert(newPet);
@@ -83,6 +74,22 @@ async function removePetModel(removedPetObj) {
   }
 }
 
+async function isPetAvailableModel(dbQuery) {
+  try {
+    const { petId, action } = dbQuery;
+    if (action === "Foster") {
+      const [isPetAvailable] = await dbConnection.from('pets').where('petId', petId).andWhere('adoptionStatus', '1');
+      return isPetAvailable;
+    }
+    if (action === "Adopt") {
+      const [isPetAdopted] = await dbConnection.from('pets').where('petId', petId).andWhereNot('adoptionStatus', '3');
+      return isPetAdopted;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 async function adoptOrFosterModel(changeReqDetails) {
   try {
     const { userId, userAction, petId } = changeReqDetails;
@@ -144,4 +151,4 @@ async function editPetModel(numPetId, newPetDetails) {
   }
 }
 
-module.exports = { addPetModel, searchPetsModel, getPetByIdModel, savePetModel, removePetModel, adoptOrFosterModel, returnPetModel, getUserPetsModel, getAllPetsModel, editPetModel };
+module.exports = { addPetModel, searchPetsModel, getPetByIdModel, savePetModel, removePetModel, isPetAvailableModel, adoptOrFosterModel, returnPetModel, getUserPetsModel, getAllPetsModel, editPetModel };

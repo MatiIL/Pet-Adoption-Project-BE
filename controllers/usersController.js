@@ -39,8 +39,8 @@ function login(req, res) {
       maxAge: 900000,
       httpOnly: true,
       path: "/",
-      // sameSite: true,
-      // secure: true,
+      sameSite: true,
+      secure: true,
     });
 
     const safeUserObj = Object.assign({ ...user, isAdmin });
