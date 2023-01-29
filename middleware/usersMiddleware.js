@@ -109,25 +109,38 @@ async function didPassChange(req, res, next) {
     next();
     return;
   } else {
-    passwordsMatch;
-    hashPasswords;
-    next();
+    if (req.body.password !== req.body.repeatPassword) {
+      res.status(400).send("Passwords dont match");
+      return;
+    }
+    const saltRounds = 12;
+    if (req.body.password !== "") {
+      bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+        if (err) {
+          res.status(500).send(err.message);
+          return;
+        }
+        req.body.password = hash;
+        next();
+      });
+    }
   }
 }
 
 async function isAdmin(req, res, next) {
   const { userId } = req.body.user;
+
   try {
     const isUser = await queryRolesDB(userId);
-      if (isUser === undefined) {
-        req.body.isAdmin = false;
-        next();
-        return;
-      } else {
-        req.body.isAdmin = isUser.admin;
-        next();
-      }
-    } catch (err) {
+    if (isUser === undefined) {
+      req.body.isAdmin = false;
+      next();
+      return;
+    } else {
+      req.body.isAdmin = isUser.admin;
+      next();
+    }
+  } catch (err) {
     err.statusCode = 500;
     next(err);
   }
@@ -137,15 +150,15 @@ async function authAdmin(req, res, next) {
   const { userId } = req.body;
   try {
     const isUser = await queryRolesDB(userId);
-      if (isUser === undefined) {
-        req.body.isAdmin = false;
-        next();
-        return;
-      } else {
-        req.body.isAdmin = isUser.admin;
-        next();
-      }
-    } catch (err) {
+    if (isUser === undefined) {
+      req.body.isAdmin = false;
+      next();
+      return;
+    } else {
+      req.body.isAdmin = isUser.admin;
+      next();
+    }
+  } catch (err) {
     err.statusCode = 500;
     next(err);
   }
@@ -169,7 +182,6 @@ async function isReqAuthorized(req, res, next) {
   }
 }
 
-
 module.exports = {
   passwordsMatch,
   isNewUser,
@@ -181,5 +193,5 @@ module.exports = {
   didPassChange,
   isAdmin,
   authAdmin,
-  isReqAuthorized
+  isReqAuthorized,
 };

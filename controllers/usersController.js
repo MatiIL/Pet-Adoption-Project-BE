@@ -4,6 +4,7 @@ const {
   updateUserModel,
   getAllUsersModel,
 } = require("../models/usersModel");
+const bcrypt = require("bcrypt");
 const { getUserPetsModel } = require("../models/petsModel");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();

@@ -36,7 +36,7 @@ async function getUserByEmailModel(email) {
         this.select('*')
           .from("users")
           .where("email", email);
-      })
+      });
       if (emailUnchanged) {
         return true;
       } else if (!emailUnchanged && newUniqueEmail) {
