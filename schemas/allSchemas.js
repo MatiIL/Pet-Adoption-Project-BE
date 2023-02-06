@@ -30,11 +30,11 @@ const petSchema = {
     adoptionStatus: { type: "string" },
     height: { type: "string" },
     weight: { type: "string" },
-    dietary: { type: "string", minLength: 2 },
+    dietary: { type: "string" },
     breed: { type: "string" },
     color: { type: "string" },
     hypoallergenic: { type: "string" },
-    bio: { type: "string", minLength: 2 },
+    bio: { type: "string" },
     imageUrl: { type: "string" },
   },
   required: [
@@ -66,22 +66,5 @@ const updateUserSchema = {
     bio: { type: "string" },
   },
 };
-
-// const updatedPetSchema = {
-//     type: "object",
-//     properties: {
-//       type: { type: "string" },
-//       name: { type: "string", minLength: 2 },
-//       adoptionStatus: { type: "string" },
-//       height: { type: "string" },
-//       weight: { type: "string" },
-//       dietary: { type: "string", minLength: 2 },
-//       breed: { type: "string" },
-//       color: { type: "string" },
-//       hypoallergenic: { type: "string" },
-//       bio: { type: "string", minLength: 2 },
-//     }
-//   };
-
 
 module.exports = { signUpSchema, loginSchema, petSchema, updateUserSchema };
