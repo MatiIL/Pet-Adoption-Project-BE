@@ -55,7 +55,6 @@ async function getPetByIdModel(petId) {
 async function savePetModel(savedPetObj) {
   try {
     const { petId, userId } = savedPetObj;
-    console.log(petId, userId)
     const [savedId] = await dbConnection.from('users_pet_list').insert(savedPetObj);
     return savedId;
   } catch (err) {
@@ -143,7 +142,6 @@ async function getAllPetsModel() {
 async function editPetModel(numPetId, newPetDetails) {
   try {
     const updatedPet = await dbConnection.from('pets').where('petId', numPetId).update(newPetDetails);
-    console.log(updatedPet)
     return updatedPet;
   }
   catch (err) {

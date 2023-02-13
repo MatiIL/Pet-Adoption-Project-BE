@@ -4,13 +4,14 @@ const {
   emailComparator,
   queryRolesDB,
 } = require("../models/usersModel");
+const { getUserPetsModel } = require("../models/petsModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 function passwordsMatch(req, res, next) {
   if (req.body.password !== req.body.repeatPassword) {
-    res.status(400).send("Passwords dont match");
+    res.status(400).send("Passwords Don't Match!");
     return;
   }
   next();
@@ -69,7 +70,7 @@ async function verifyPass(req, res, next) {
     if (result) {
       next();
     } else {
-      res.status(400).send("Incorrect Password");
+      res.status(400).send("Incorrect Password!");
     }
   });
 }
@@ -129,7 +130,6 @@ async function didPassChange(req, res, next) {
 
 async function isAdmin(req, res, next) {
   const { userId } = req.body.user;
-
   try {
     const isUser = await queryRolesDB(userId);
     if (isUser === undefined) {
@@ -164,6 +164,24 @@ async function authAdmin(req, res, next) {
   }
 }
 
+async function getUserPets(req, res, next) {
+  try {
+    const { userId } = req.body;
+    if (userId) {
+      const allUserPets = await getUserPetsModel(userId);
+      req.body.userPets = allUserPets;
+      next();
+      if (allUserPets.error) {
+        throw new Error(allUserPets.error);
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+    next();
+  }
+}
+
 async function isReqAuthorized(req, res, next) {
   let userId;
   if (req.body.userId) {
@@ -192,6 +210,7 @@ module.exports = {
   didEmailChange,
   didPassChange,
   isAdmin,
+  getUserPets,
   authAdmin,
   isReqAuthorized,
 };

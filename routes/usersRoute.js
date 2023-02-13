@@ -11,6 +11,7 @@ const {
   didEmailChange, 
   didPassChange, 
   isAdmin, 
+  getUserPets,
   authAdmin, 
   isReqAuthorized 
 } = require("../middleware/usersMiddleware");
@@ -43,7 +44,7 @@ didPassChange,
 UsersController.editUser);
 
 router.get("/logout", UsersController.logout);
-router.get("/", verifyToken, authAdmin, UsersController.authUser);
+router.get("/", verifyToken, authAdmin, getUserPets, UsersController.authUser);
 router.get("/:userId/full", verifyToken, isReqAuthorized, UsersController.getFullUser); 
 router.get("/all-users", verifyToken, isReqAuthorized, UsersController.getAllUsers); 
 

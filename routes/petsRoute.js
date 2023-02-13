@@ -22,7 +22,6 @@ router.post('/:petId/save', verifyToken, PetsController.savePet);
 router.delete('/:petId/remove', verifyToken, PetsController.removePet); 
 router.post('/adopt/:petId', verifyToken, isPetAvailable, PetsController.adoptOrFoster); 
 router.post('/return/:petId', verifyToken, PetsController.returnPet);
-router.get('/mypets/:userId', verifyToken, PetsController.getUserPets);
 router.get('/', verifyToken, isReqAuthorized, PetsController.getAllPets); 
 router.put(
     '/:userId/:petId', 

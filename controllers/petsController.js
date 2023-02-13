@@ -7,7 +7,6 @@ const {
   removePetModel,
   adoptOrFosterModel,
   returnPetModel,
-  getUserPetsModel,
   editPetModel,
 } = require("../models/petsModel");
 
@@ -153,22 +152,6 @@ async function returnPet(req, res) {
   }
 }
 
-async function getUserPets(req, res) {
-  try {
-    const { userId } = req.body;
-    if (userId) {
-      const allUserPets = await getUserPetsModel(userId);
-      res.send(allUserPets);
-      if (allUserPets.error) {
-        throw new Error(allUserPets.error);
-      }
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).send(err.message);
-  }
-}
-
 async function getAllPets(req, res) {
   
       try {
@@ -234,6 +217,5 @@ module.exports = {
   removePet,
   adoptOrFoster,
   returnPet,
-  getUserPets,
   editPet,
 };

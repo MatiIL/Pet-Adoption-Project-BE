@@ -37,7 +37,7 @@ function login(req, res) {
       expiresIn: "2h",
     });
     res.cookie("token", token, {
-      maxAge: 900000,
+      maxAge: 3600000,
       httpOnly: true,
       path: "/",
       sameSite: true,
@@ -67,11 +67,11 @@ function logout(req, res) {
 
 async function authUser(req, res) {
   try {
-    const { userId, isAdmin } = req.body;
+    const { userId, isAdmin, userPets } = req.body;
     const user = await getUserByIdModel(userId);
     if (user.error) throw new Error(user.error);
     else {
-      const safeUserObj = Object.assign({ ...user });
+      const safeUserObj = Object.assign({ ...user, userPets });
       delete safeUserObj.password;
       safeUserObj.isAdmin = isAdmin;
       res.send(safeUserObj);
