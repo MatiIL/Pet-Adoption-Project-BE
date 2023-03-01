@@ -4,10 +4,10 @@ const pathToMigrations = path.resolve(__dirname, "../migrations");
 module.exports = {
   client: "mysql",
   connection: {
-    database: "petsapp_db",
-    user: "root",
-    password: "MBSQL1982",
-    host: "localhost",
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    host: process.env.DB_HOST,
   },
   pool: {
     min: 2,

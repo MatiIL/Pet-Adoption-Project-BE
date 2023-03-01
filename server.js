@@ -5,6 +5,7 @@ const petsRoute = require("./routes/petsRoute");
 const usersRoute = require("./routes/usersRoute");
 const dbConnection = require("./knex/knex");
 const cookieParser = require("cookie-parser");
+const pino = require('pino-http');
 const app = express();
 
 app.use("/images", express.static("images"));
@@ -15,6 +16,7 @@ app.use(cookieParser());
 app.use('/pets', petsRoute);
 app.use("/users", usersRoute);
 app.use("*", (req, res) => res.status(404).json({ error: "not found" }));
+app.use(pino({ level: 'info'}));
 
 dbConnection.migrate
   .latest()
