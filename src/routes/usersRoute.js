@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const UsersController = require("../controllers/UsersController");
+const UsersController = require("../controllers/usersController");
 const { 
   passwordsMatch, 
   isNewUser, 

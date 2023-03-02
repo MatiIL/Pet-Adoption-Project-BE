@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const PetsController = require('../controllers/PetsController');
+const PetsController = require('../controllers/petsController');
 const { validateBody } = require('../middleware/validateBody');
 const { petSchema } = require('../schemas/allSchemas');
 const { upload, uploadToCloudinary } = require('../middleware/imagesMiddleware');
