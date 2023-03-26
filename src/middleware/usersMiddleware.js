@@ -1,10 +1,7 @@
 const {
   getUserByEmailModel,
   getUserByIdModel,
-  emailComparator,
-  queryRolesDB,
 } = require("../models/usersModel");
-const { getUserPetsModel } = require("../models/petsModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -94,11 +91,18 @@ async function verifyToken(req, res, next) {
 async function didEmailChange(req, res, next) {
   const { userId, email } = req.body;
   try {
-    const isEmailUnique = await emailComparator(userId, email);
-    if (isEmailUnique) {
+    const user = await getUserByIdModel(userId);
+    if (user.email === email) {
       next();
       return;
-    } else res.send("User Email Already Exists");
+    } else {
+      const emailTaken = await getUserByEmailModel(email);
+      if (emailTaken) {
+        res.status(400).send("User Email Already Exists");
+        return;
+      }
+      next();
+    }
   } catch (err) {
     err.statusCode = 500;
     next(err);
@@ -128,59 +132,59 @@ async function didPassChange(req, res, next) {
   }
 }
 
-async function isAdmin(req, res, next) {
-  const { userId } = req.body.user;
-  try {
-    const isUser = await queryRolesDB(userId);
-    if (isUser === undefined) {
-      req.body.isAdmin = false;
-      next();
-      return;
-    } else {
-      req.body.isAdmin = isUser.admin;
-      next();
-    }
-  } catch (err) {
-    err.statusCode = 500;
-    next(err);
-  }
-}
+// async function isAdmin(req, res, next) {
+//   const { userId } = req.body.user;
+//   try {
+//     const isUser = await queryRolesDB(userId);
+//     if (isUser === undefined) {
+//       req.body.isAdmin = false;
+//       next();
+//       return;
+//     } else {
+//       req.body.isAdmin = isUser.admin;
+//       next();
+//     }
+//   } catch (err) {
+//     err.statusCode = 500;
+//     next(err);
+//   }
+// }
 
-async function authAdmin(req, res, next) {
-  const { userId } = req.body;
-  try {
-    const isUser = await queryRolesDB(userId);
-    if (isUser === undefined) {
-      req.body.isAdmin = false;
-      next();
-      return;
-    } else {
-      req.body.isAdmin = isUser.admin;
-      next();
-    }
-  } catch (err) {
-    err.statusCode = 500;
-    next(err);
-  }
-}
+// async function authAdmin(req, res, next) {
+//   const { userId } = req.body;
+//   try {
+//     const isUser = await queryRolesDB(userId);
+//     if (isUser === undefined) {
+//       req.body.isAdmin = false;
+//       next();
+//       return;
+//     } else {
+//       req.body.isAdmin = isUser.admin;
+//       next();
+//     }
+//   } catch (err) {
+//     err.statusCode = 500;
+//     next(err);
+//   }
+// }
 
-async function getUserPets(req, res, next) {
-  try {
-    const { userId } = req.body;
-    if (userId) {
-      const allUserPets = await getUserPetsModel(userId);
-      req.body.userPets = allUserPets;
-      next();
-      if (allUserPets.error) {
-        throw new Error(allUserPets.error);
-      }
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).send(err.message);
-    next();
-  }
-}
+// async function getUserPets(req, res, next) {
+//   try {
+//     const { userId } = req.body;
+//     if (userId) {
+//       const allUserPets = await getUserPetsModel(userId);
+//       req.body.userPets = allUserPets;
+//       next();
+//       if (allUserPets.error) {
+//         throw new Error(allUserPets.error);
+//       }
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).send(err.message);
+//     next();
+//   }
+// }
 
 async function isReqAuthorized(req, res, next) {
   let userId;
@@ -188,8 +192,8 @@ async function isReqAuthorized(req, res, next) {
     userId = req.body.userId;
   } else userId = req.params;
   try {
-    const isAuthorized = await queryRolesDB(userId);
-    if (isAuthorized) {
+    const user = await getUserByIdModel(userId);
+    if (user.isAdmin) {
       next();
     } else {
       res.status(403).send("Forbidden access");
@@ -209,8 +213,5 @@ module.exports = {
   verifyToken,
   didEmailChange,
   didPassChange,
-  isAdmin,
-  getUserPets,
-  authAdmin,
   isReqAuthorized,
 };

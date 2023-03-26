@@ -10,12 +10,9 @@ const {
   verifyToken, 
   didEmailChange, 
   didPassChange, 
-  isAdmin, 
-  getUserPets,
-  authAdmin, 
   isReqAuthorized 
 } = require("../middleware/usersMiddleware");
-const  { signUpSchema, loginSchema, updateUserSchema }  = require('../schemas/allSchemas');
+const  { signUpSchema, loginSchema, updateUserSchema }  = require('../schemas/validationSchemas');
 const { validateBody } = require('../middleware/validateBody');
 
 router.post(
@@ -32,19 +29,17 @@ router.post(
   validateBody(loginSchema),
   doesUserExist,
   verifyPass,
-  isAdmin,
   UsersController.login
 );
 
 router.put("/:userId", 
 verifyToken, 
-validateBody(updateUserSchema), 
 didEmailChange,
 didPassChange,
 UsersController.editUser);
 
 router.get("/logout", UsersController.logout);
-router.get("/", verifyToken, authAdmin, getUserPets, UsersController.authUser);
+router.get("/", verifyToken, UsersController.authUser);
 router.get("/:userId/full", verifyToken, isReqAuthorized, UsersController.getFullUser); 
 router.get("/all-users", verifyToken, isReqAuthorized, UsersController.getAllUsers); 
 

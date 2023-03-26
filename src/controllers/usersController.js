@@ -4,25 +4,17 @@ const {
   updateUserModel,
   getAllUsersModel,
 } = require("../models/usersModel");
-const bcrypt = require("bcrypt");
-const { getUserPetsModel } = require("../models/petsModel");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-async function signUp(req, res) {
+async function signUp(req, res, next) {
   try {
-    const { email, password, firstName, lastName, phone } = req.body;
-    const newUser = {
-      email,
-      password,
-      firstName,
-      lastName,
-      phone,
-    };
-    const userId = await signUpModel(newUser);
-    if (userId.error) {
-      throw new Error(userId.error);
-    } else res.send({ userId: userId, email, firstName, lastName });
+    const { firstName, lastName, email, phone } = req.body;
+    const { userId } = await signUpModel(req.body);
+    if (userId) {
+      res.send({ firstName, lastName, email, phone });
+      return;
+    }
   } catch (err) {
     err.statusCode = 500;
     next(err);
@@ -30,10 +22,9 @@ async function signUp(req, res) {
 }
 
 function login(req, res) {
+  const { user } = req.body;
   try {
-    const { user, isAdmin } = req.body;
-    const { userId } = req.body.user;
-    const token = jwt.sign({ id: userId }, process.env.TOKEN_SECRET, {
+    const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, {
       expiresIn: "2h",
     });
     res.cookie("token", token, {
@@ -44,7 +35,7 @@ function login(req, res) {
       secure: true,
     });
 
-    const safeUserObj = Object.assign({ ...user, isAdmin });
+    const safeUserObj = Object.assign({ ...user });
     delete safeUserObj.password;
     res.send({ user: safeUserObj, ok: true });
   } catch (err) {
@@ -67,15 +58,17 @@ function logout(req, res) {
 
 async function authUser(req, res) {
   try {
-    const { userId, isAdmin, userPets } = req.body;
+    const { userId } = req.body;
     const user = await getUserByIdModel(userId);
-    if (user.error) throw new Error(user.error);
-    else {
-      const safeUserObj = Object.assign({ ...user, userPets });
-      delete safeUserObj.password;
-      safeUserObj.isAdmin = isAdmin;
-      res.send(safeUserObj);
-    }
+    res.send({
+      id: userId,
+      isAdmin: user.isAdmin,
+      firstName: user.firstName,
+      email: user.email,
+      lastName: user.lastName,
+      phone: user.phone,
+      bio: user.bio,
+    });
   } catch (err) {
     console.log(err);
   }
@@ -133,19 +126,11 @@ async function getAllUsers(req, res) {
 
 async function getFullUser(req, res) {
   try {
-    const { userId } = req.params;
+    const { userId } = req.body;
     const user = await getUserByIdModel(userId);
-    if (user.error) throw new Error(user.error);
-    else {
-      const safeUserObj = Object.assign({ ...user });
-      delete safeUserObj.password;
-      const allUserPets = await getUserPetsModel(userId);
-      if (allUserPets.error) throw new Error(allUserPets.error);
-      else {
-        const ownedPets = allUserPets[0];
-        res.status(200).send([safeUserObj, ownedPets]);
-      }
-    }
+    if (user.errors) {
+      throw new Error(user.errors);
+    } else res.status(200).send(user);
   } catch (err) {
     console.log(err);
   }
