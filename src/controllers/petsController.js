@@ -8,38 +8,11 @@ const {
   setPetAvailableModel,
   editPetModel,
 } = require("../models/petsModel");
-const { ownPetModel, returnPetModel } = require("../models/usersModel");
+const { ownPetModel, returnPetModel, savePetModel, unsavePetModel } = require("../models/usersModel");
 
 async function addPet(req, res) {
   try {
-    const {
-      type,
-      name,
-      adoptionStatus,
-      imageUrl,
-      height,
-      weight,
-      dietary,
-      breed,
-      color,
-      hypoallergenic,
-      bio,
-    } = req.body;
-    const isHypo = hypoallergenic === "true" ? 1 : 0;
-    const newPet = {
-      type: type,
-      name: name,
-      adoptionStatus: adoptionStatus,
-      picture: imageUrl,
-      height: height,
-      weight: weight,
-      dietary: dietary,
-      breed: breed,
-      color: color,
-      hypoallergenic: isHypo,
-      bio: bio,
-    };
-    const petId = await addPetModel(newPet);
+    const petId = await addPetModel(req.body);
     if (petId.error) {
       throw new Error(petId.error);
     }
@@ -51,23 +24,11 @@ async function addPet(req, res) {
 
 async function getSearchedPets(req, res) {
   try {
-    const { type, status, name, minHeight, maxHeight, minWeight, maxWeight } =
-      req.query;
-
-    const petSearchObj = {
-      type: type,
-      status: status,
-      name: name,
-      minHeight: minHeight,
-      maxHeight: maxHeight,
-      minWeight: minWeight,
-      maxWeight: maxWeight,
-    };
-    const findPets = await searchPetsModel(petSearchObj);
-    res.send(findPets);
+    const search = req.query;
+    const filteredPets = await searchPetsModel(search);
+    if (filteredPets) res.status(200).send(filteredPets);
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err.message);
+    res.status(400).send(err.message);
   }
 }
 
@@ -82,39 +43,33 @@ async function getPetById(req, res) {
   }
 }
 
-// async function savePet(req, res) {
-//   try {
-//     const { userId } = req.body;
-//     const { petId } = req.params;
-//     const savedPetObj = {
-//       userId: userId,
-//       petId: parseInt(petId),
-//     };
-//     const savePet = await savePetModel(savedPetObj);
-//     if (savePet.error) {
-//       throw new Error(savePet.error);
-//     }
-//     res.send({ ok: true });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).send(err.message);
+async function savePet(req, res) {
+  try {
+    const { userId } = req.body;
+    const { petId } = req.params;
+    const savePet = await savePetModel(petId, userId);
+    if (savePet.error) {
+      throw new Error(savePet.error);
+    } else res.status(200).send({ ok: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+  }
+}
   
-
-// async function removePet(req, res) {
-//   try {
-//     const petId = req.params.petId;
-//     const userId = req.body.userId;
-//     const removedPetObj = {
-//       userId: userId,
-//       petId: parseInt(petId),
-//     };
-//     const removePet = await unsavePetModel(removedPetObj);
-//     if (removePet.error) {
-//       throw new Error(removePet.error);
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).send(err.message);
+async function removePet(req, res) {
+  try {
+    const petId = req.params.petId;
+    const userId = req.body.userId;
+    const removePet = await unsavePetModel(petId, userId);
+    if (removePet.error) {
+      throw new Error(removePet.error);
+    } else res.status(200).send({ ok: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+  }
+}
   
 
 async function adoptOrFoster(req, res) {
@@ -148,7 +103,6 @@ async function adoptOrFoster(req, res) {
 }
 
 async function returnPet(req, res) {
-  console.log(req.body);
   try {
     const returnedPet = await returnPetModel(req);
     if (returnedPet.error) {
@@ -219,6 +173,8 @@ module.exports = {
   addPet,
   getSearchedPets,
   getPetById,
+  savePet,
+  removePet,
   adoptOrFoster,
   returnPet,
   editPet,

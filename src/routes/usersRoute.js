@@ -40,6 +40,8 @@ UsersController.editUser);
 
 router.get("/logout", UsersController.logout);
 router.get("/", verifyToken, UsersController.authUser);
+router.get('/saved-pets', verifyToken, UsersController.getSavedPets);
+router.get('/owned-pets', verifyToken, UsersController.getOwnedPets);
 router.get("/:userId/full", verifyToken, isReqAuthorized, UsersController.getFullUser); 
 router.get("/all-users", verifyToken, isReqAuthorized, UsersController.getAllUsers); 
 
