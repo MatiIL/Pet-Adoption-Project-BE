@@ -74,9 +74,7 @@ async function removePet(req, res) {
 
 async function adoptOrFoster(req, res) {
   try {
-    const { petId } = req.params;
-    const { userId, action } = req.body;
-    
+    const { userId, action, petId } = req.body;
     const petOwned = await ownPetModel(petId, userId);
     if (petOwned.error) {
       throw new Error(petOwned.error);
@@ -104,11 +102,16 @@ async function adoptOrFoster(req, res) {
 
 async function returnPet(req, res) {
   try {
-    const returnedPet = await returnPetModel(req);
+    const { userId } = req.body;
+    const { petId } = req.params;
+    const returnedPet = await setPetAvailableModel(petId);
     if (returnedPet.error) {
       throw new Error(returnedPet.error);
     }
-    // const petAvailable = await setPetAvailableModel()
+    const removePetFromUser = await returnPetModel(petId, userId);
+    if (removePetFromUser.error) {
+      throw new Error(removePetFromUser.error);
+    }
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message);
@@ -129,7 +132,6 @@ async function getAllPets(req, res) {
 
 async function editPet(req, res) {
   const { petId } = req.params;
-  const numPetId = parseInt(petId);
   try {
     const {
       type,
@@ -144,7 +146,6 @@ async function editPet(req, res) {
       hypoallergenic,
       bio,
     } = req.body;
-    const isHypo = hypoallergenic === "true" ? 1 : 0;
     const newPetDetails = {
       type: type,
       name: name,
@@ -155,10 +156,10 @@ async function editPet(req, res) {
       dietary: dietary,
       breed: breed,
       color: color,
-      hypoallergenic: isHypo,
+      hypoallergenic: hypoallergenic,
       bio: bio,
     };
-    const editPet = await editPetModel(numPetId, newPetDetails);
+    const editPet = await editPetModel(petId, newPetDetails);
     if (editPet.error) {
       throw new Error(editPet.error);
     }

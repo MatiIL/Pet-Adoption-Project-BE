@@ -10,9 +10,9 @@ async function addPetModel(newPet) {
   }
 }
 
-async function editPetModel(petId, newPet) {
+async function editPetModel(petId, newDetails) {
   try {
-    const pet = await Pet.findByIdAndUpdate(petId, newPet, {new: true});
+    const pet = await Pet.findByIdAndUpdate(petId, newDetails, {new: true});
     return pet;
   } catch (err) {
     console.log(err.message);
@@ -32,6 +32,20 @@ async function searchPetsModel(params) {
   try {
     const filteredPets = await Pet.find(params);
     return filteredPets;
+  } catch (err) {
+    console.log(err.message);
+  }
+}
+
+async function isPetAvailableModel(petId, action) {
+  try {
+    const pet = await Pet.findById({ _id: petId }, { adoptionStatus: 1 });
+    if (
+      (action === 'Foster' && pet.adoptionStatus !== 'Available') ||
+      (action === 'Adopt' && pet.adoptionStatus === 'Adopted')
+    ) {
+      return false;
+    } else return true;
   } catch (err) {
     console.log(err.message);
   }
@@ -87,6 +101,7 @@ module.exports = {
   editPetModel,
   getPetByIdModel,
   searchPetsModel,
+  isPetAvailableModel,
   setPetFosteredModel,
   setPetAdoptedModel,
   setPetAvailableModel,

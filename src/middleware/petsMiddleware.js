@@ -29,11 +29,7 @@ async function isPetAvailable(req, res, next) {
   try {
     const { petId } = req.params;
     const { action } = req.body;
-    const dbQuery = {
-      petId: petId,
-      action: action,
-    };
-    const isActionPermitted = await isPetAvailableModel(dbQuery);
+    const isActionPermitted = await isPetAvailableModel(petId, action);
     if (isActionPermitted) {
       next();
     } else {
