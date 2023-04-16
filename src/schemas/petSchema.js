@@ -14,6 +14,7 @@ const petSchema = new mongoose.Schema(
     dietary: { type: String, required: true },
     imageUrl: { type: String, required: true },
   },
+  { collation: { locale: 'en', strength: 2 } },
   { timestamps: true },
   { collection: "pets" }
 );

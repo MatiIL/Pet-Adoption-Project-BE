@@ -2,7 +2,7 @@ const { isPetAvailableModel } = require("../models/petsModel");
 require("dotenv").config();
 
 function filterPetSearch(req, res, next) {
-  const { nameParam, minHeightParam, maxHeightParam, minWeightParam, maxWeightParam } = req.query;
+  const { minHeightParam, maxHeightParam, minWeightParam, maxWeightParam } = req.query;
   for (let key in req.query) {
     if (req.query[key] === "" || req.query[key] === 0 || req.query[key] === 'Type') {
       delete req.query[key];
@@ -21,7 +21,6 @@ function filterPetSearch(req, res, next) {
   delete req.query.maxHeight;
   delete req.query.maxWeight;
 
-  if (nameParam) {req.query.name = { $regex: nameParam, $options: "i" }};
   next();
 }
 

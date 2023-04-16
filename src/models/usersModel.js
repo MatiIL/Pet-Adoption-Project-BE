@@ -4,7 +4,7 @@ async function signUpModel(newUser) {
   try {
     const user = new User(newUser);
     await user.save();
-    return res;
+    return user;
   } catch (err) {
     console.log(err.message);
   }
@@ -46,9 +46,8 @@ async function returnPetModel(petId, userId) {
   try {
     const returned = await User.updateOne(
       { _id: userId },
-      { $pull: { adoptedPets: petId } }
+      { $pull: { ownedPets: petId } }
     );
-    await User.updateOne({ _id: userId }, { $pull: { fosteredPets: petId } });
     return returned;
   } catch (err) {
     console.log(err.message);

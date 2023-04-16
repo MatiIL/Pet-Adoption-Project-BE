@@ -10,9 +10,9 @@ require("dotenv").config();
 async function signUp(req, res, next) {
   try {
     const { firstName, lastName, email, phone } = req.body;
-    const { userId } = await signUpModel(req.body);
+    const userId = await signUpModel(req.body);
     if (userId) {
-      res.send({ firstName, lastName, email, phone });
+      res.send({ ok: true, firstName, lastName, email, phone });
       return;
     }
   } catch (err) {
@@ -131,16 +131,10 @@ async function getOwnedPets(req, res) {
   try {
     const { userId } = req.body;
     const user = await getUserByIdModel(userId);
-    // console.log("user.fostered", user.fostered);
-    // console.log("user.adopted", user.adopted);
-    // console.log("all owned pets", {
-    //   fostered: user.fosteredPets || [],
-    //   adopted: user.adoptedPets || [],
-    // });
     if (user)
       res
         .status(200)
-        .send({ fostered: user.fosteredPets, adopted: user.adoptedPets });
+        .send(user.ownedPets);
   } catch (err) {
     res.status(400).send(err.message);
   }
@@ -158,7 +152,7 @@ async function getAllUsers(req, res) {
 
 async function getFullUser(req, res) {
   try {
-    const { userId } = req.body;
+    const { userId } = req.params;
     const user = await getUserByIdModel(userId);
     if (user.errors) {
       throw new Error(user.errors);
