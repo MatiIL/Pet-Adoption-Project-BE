@@ -1,5 +1,5 @@
 const express = require("express");
-require("dotenv").config();
+require("dotenv").config({ path: "./.env" });
 const PORT = process.env.PORT || 8080;
 const cors = require("cors");
 const petsRoute = require("./routes/petsRoute");
@@ -37,15 +37,3 @@ async function init() {
 }
 
 init();
-
-// dbConnection.migrate
-//   .latest()
-//   .then((migration) => {
-//     if (migration) {
-//       console.log(migration, "Connected to DB");
-//       app.listen(PORT, () => {
-//         console.log("Listening on port " + PORT);
-//       });
-//     }
-//   })
-//   .catch((err) => console.error(err));
