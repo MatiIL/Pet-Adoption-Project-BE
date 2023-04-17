@@ -12,7 +12,7 @@ app.use("/images", express.static("images"));
 app.use(express.json());
 
 const getServerUrl = () => {
-  if (process.env.NODE_ENV === 'production') return 'https://pet-adoption-client.onrender.com/'
+  if (process.env.NODE_ENV === 'production') return 'https://pet-adoption-client.onrender.com'
   return "http://localhost:3000";
 }
 
