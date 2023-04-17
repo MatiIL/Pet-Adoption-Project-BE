@@ -20,8 +20,9 @@ app.use(cors({ origin: getServerUrl(), credentials: true }));
 // app.options('*', cors())
 app.use(cookieParser());
 
-app.use("/pets", petsRoute);
 app.use("/users", usersRoute);
+app.use("/pets", petsRoute);
+
 // app.use("*", (req, res) => res.status(404).json({ error: "not found" }));
 
 async function init() {
