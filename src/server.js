@@ -16,7 +16,7 @@ const getServerUrl = () => {
   return "http://localhost:3000";
 }
 
-app.use(cors({ origin: getServerUrl, credentials: true }));
+app.use(cors({ origin: getServerUrl(), credentials: true }));
 app.options('*', cors())
 app.use(cookieParser());
 
