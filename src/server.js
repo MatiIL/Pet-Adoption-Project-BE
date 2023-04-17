@@ -17,7 +17,7 @@ const getServerUrl = () => {
 }
 
 app.use(cors({ origin: getServerUrl(), credentials: true }));
-app.options('*', cors())
+// app.options('*', cors())
 app.use(cookieParser());
 
 app.use("/pets", petsRoute);
