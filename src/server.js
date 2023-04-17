@@ -22,7 +22,7 @@ app.use(cookieParser());
 
 app.use("/pets", petsRoute);
 app.use("/users", usersRoute);
-app.use("*", (req, res) => res.status(404).json({ error: "not found" }));
+// app.use("*", (req, res) => res.status(404).json({ error: "not found" }));
 
 async function init() {
   try {
