@@ -11,7 +11,7 @@ const app = express();
 app.use("/images", express.static("images"));
 app.use(express.json());
 
-app.use(cors({origin: ['http://localhost:3000', 'https://pet-adoption-client.onrender.com'], credentials: true}));
+app.use(cors({origin: ['http://localhost:3000', 'https://pet-adoption-client.onrender.com'], credentials: false}));
 app.use(cookieParser());
 
 app.use("/pets", petsRoute);
