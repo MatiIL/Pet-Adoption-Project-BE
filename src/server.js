@@ -1,5 +1,5 @@
 const express = require("express");
-require("dotenv").config({ path: "./.env" });
+require("dotenv").config();
 const PORT = process.env.PORT || 8080;
 const cors = require("cors");
 const petsRoute = require("./routes/petsRoute");
@@ -11,19 +11,11 @@ const app = express();
 app.use("/images", express.static("images"));
 app.use(express.json());
 
-const getServerUrl = () => {
-  if (process.env.NODE_ENV === 'production') return 'https://pet-adoption-client.onrender.com'
-  return "http://localhost:3000";
-}
-
-app.use(cors({ origin: getServerUrl(), credentials: true }));
-// app.options('*', cors())
+app.use(cors({origin: ['http://localhost:3000', 'https://pet-adoption-client.onrender.com'], credentials: true}));
 app.use(cookieParser());
 
-app.use("/users", usersRoute);
 app.use("/pets", petsRoute);
-
-// app.use("*", (req, res) => res.status(404).json({ error: "not found" }));
+app.use("/users", usersRoute);
 
 async function init() {
   try {
