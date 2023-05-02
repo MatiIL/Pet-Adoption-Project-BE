@@ -14,8 +14,8 @@ app.use(express.json());
 app.use(cors({origin: ['http://localhost:3000', 'https://pet-adoption-client.onrender.com'], credentials: true}));
 app.use(cookieParser());
 
-app.use("/pets", petsRoute);
 app.use("/users", usersRoute);
+app.use("/pets", petsRoute);
 
 async function init() {
   try {

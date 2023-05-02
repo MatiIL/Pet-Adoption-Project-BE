@@ -12,7 +12,7 @@ const {
   didPassChange, 
   isReqAuthorized 
 } = require("../middleware/usersMiddleware");
-const  { signUpSchema, loginSchema, updateUserSchema }  = require('../schemas/validationSchemas');
+const  { signUpSchema, loginSchema }  = require('../schemas/validationSchemas');
 const { validateBody } = require('../middleware/validateBody');
 
 router.post(
