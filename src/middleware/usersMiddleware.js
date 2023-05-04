@@ -65,7 +65,12 @@ async function verifyPass(req, res, next) {
   const { user, password } = req.body;
   bcrypt.compare(password, user.password, (err, result) => {
     if (result) {
+      const token = jwt.sign({ id }, process.env.TOKEN_SECRET, {
+        expiresIn: "2h",
+      });
+      req.body.token = token;
       next();
+      return;
     } else {
       res.status(400).send("Incorrect Password!");
     }
