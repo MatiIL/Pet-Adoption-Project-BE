@@ -14,12 +14,13 @@ router.post(
     PetsController.addPet
     ); 
 router.get('/search', filterPetSearch, PetsController.getSearchedPets);
-router.get('/:petId', PetsController.getPetById);
-router.put('/:petId/save', verifyToken, PetsController.savePet); 
-router.delete('/:petId/remove', verifyToken, PetsController.removePet); 
-router.post('/adopt/:petId', verifyToken, isPetAvailable, PetsController.adoptOrFoster); 
-router.post('/return/:petId', verifyToken, PetsController.returnPet);
-router.get('/all-pets', verifyToken, isReqAuthorized, PetsController.getAllPets); 
+router.get('/all-pets', verifyToken, isReqAuthorized, PetsController.getAllPets);
+router.get('/pet/:petId', PetsController.getPetById);
+router.put('/pet/:petId/save', verifyToken, PetsController.savePet); 
+router.delete('/pet/:petId/remove', verifyToken, PetsController.removePet); 
+router.post('/pet/adopt/:petId', verifyToken, isPetAvailable, PetsController.adoptOrFoster); 
+router.post('/pet/return/:petId', verifyToken, PetsController.returnPet);
+ 
 router.put(
     '/:userId/:petId', 
     verifyToken, 
