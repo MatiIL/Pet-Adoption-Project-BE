@@ -63,13 +63,14 @@ async function doesUserExist(req, res, next) {
 
 async function verifyPass(req, res, next) {
   const { user, password } = req.body;
+  const id = (user._id).valueOf();
   bcrypt.compare(password, user.password, (err, result) => {
     if (result) {
       const token = jwt.sign({ id }, process.env.TOKEN_SECRET, {
         expiresIn: "2h",
-        httpOnly: true, 
-        sameSite: 'None', 
-        secure: true
+        // httpOnly: true, 
+        // sameSite: 'None', 
+        // secure: true
       });
       req.body.token = token;
       next();
