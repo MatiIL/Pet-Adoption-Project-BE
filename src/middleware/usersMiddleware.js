@@ -68,9 +68,9 @@ async function verifyPass(req, res, next) {
     if (result) {
       const token = jwt.sign({ id }, process.env.TOKEN_SECRET, {
         expiresIn: "2h",
-        // httpOnly: true, 
-        // sameSite: 'None', 
-        // secure: true
+        httpOnly: true, 
+        sameSite: 'None', 
+        secure: true
       });
       req.body.token = token;
       next();
