@@ -8,7 +8,6 @@ function filterPetSearch(req, res, next) {
       delete req.query[key];
     }
   }
-
   const minHeight = Number(minHeightParam) > 0 ? minHeightParam : 0; 
   const minWeight = Number(minWeightParam) > 0 ? minWeightParam : 0;
   const maxHeight = Number(maxHeightParam) > 0? maxHeightParam : 90;
@@ -16,10 +15,10 @@ function filterPetSearch(req, res, next) {
 
   req.query.height = { $gte: minHeight, $lte: maxHeight};
   req.query.weight = { $gte: minWeight, $lte: maxWeight};
-  delete req.query.minHeight;
-  delete req.query.minWeight;
-  delete req.query.maxHeight;
-  delete req.query.maxWeight;
+  delete req.query.minHeightParam;
+  delete req.query.minWeightParam;
+  delete req.query.maxHeightParam;
+  delete req.query.maxWeightParam;
 
   next();
 }
