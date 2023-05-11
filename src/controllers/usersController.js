@@ -120,7 +120,6 @@ async function getSavedPets(req, res) {
   try {
     const { userId } = req.body;
     const user = await getUserByIdModel(userId);
-    // console.log("all saved pets", user.savedPets);
     if (user) res.status(200).send(user.savedPets);
   } catch (err) {
     res.status(400).send(err.message);

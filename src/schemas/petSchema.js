@@ -13,6 +13,7 @@ const petSchema = new mongoose.Schema(
     hypoallergenic: { type: String, required: true },
     dietary: { type: String, required: true },
     imageUrl: { type: String, required: true },
+    ownerId: { type: String }
   },
   { collation: { locale: 'en', strength: 2 } },
   { timestamps: true },

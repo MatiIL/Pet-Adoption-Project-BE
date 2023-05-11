@@ -1,6 +1,7 @@
 const Pet = require("../schemas/petSchema");
 
 async function addPetModel(newPet) {
+  newPet.ownerId = "";
   try {
     const pet = new Pet(newPet);
     await pet.save();
@@ -39,10 +40,10 @@ async function searchPetsModel(params) {
 
 async function isPetAvailableModel(petId, action) {
   try {
-    const pet = await Pet.findById({ _id: petId }, { adoptionStatus: 1 });
+    const pet = await Pet.findById({ _id: petId });
     if (
-      (action === 'Foster' && pet.adoptionStatus !== 'Available') ||
-      (action === 'Adopt' && pet.adoptionStatus === 'Adopted')
+      (action === 'Foster' && pet.adoptionStatus !== '1') ||
+      (action === 'Adopt' && pet.adoptionStatus === '3')
     ) {
       return false;
     } else return true;
@@ -51,11 +52,11 @@ async function isPetAvailableModel(petId, action) {
   }
 }
 
-async function setPetFosteredModel(petId) {
+async function setPetFosteredModel(petId, userId) {
   try {
     const petStatus = await Pet.updateOne(
       { _id: petId },
-      { $set: { adoptionStatus: "Fostered" } }
+      { $set: { adoptionStatus: "2", ownerId: userId } }
     );
     if (petStatus) return { ok: true };
   } catch (err) {
@@ -63,11 +64,11 @@ async function setPetFosteredModel(petId) {
   }
 }
 
-async function setPetAdoptedModel(petId) {
+async function setPetAdoptedModel(petId, userId) {
   try {
     const petStatus = await Pet.updateOne(
       { _id: petId },
-      { $set: { adoptionStatus: "Adopted" } }
+      { $set: { adoptionStatus: "3", ownerId: userId } }
     );
     if (petStatus) return { ok: true };
   } catch (err) {
@@ -79,7 +80,7 @@ async function setPetAvailableModel(petId) {
   try {
     const petStatus = await Pet.updateOne(
       { _id: petId },
-      { $set: { adoptionStatus: "Available" } }
+      { $set: { adoptionStatus: "1", ownerId: "" } }
     );
     if (petStatus) return { ok: true };
   } catch (err) {

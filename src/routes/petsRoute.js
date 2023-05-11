@@ -3,10 +3,10 @@ const router = express.Router();
 const PetsController = require('../controllers/petsController');
 const { upload, uploadToCloudinary } = require('../middleware/imagesMiddleware');
 const { verifyToken, isReqAuthorized } = require('../middleware/usersMiddleware');
-const { filterPetSearch, isPetAvailable } = require('../middleware/petsMiddleware');
+const { filterPetSearch, verifyPetStatus } = require('../middleware/petsMiddleware');
 
 router.post(
-    '/', 
+    '/add-pet', 
     verifyToken, 
     isReqAuthorized, 
     upload.single("picture"), 
@@ -18,8 +18,13 @@ router.get('/all-pets', verifyToken, isReqAuthorized, PetsController.getAllPets)
 router.get('/pet/:petId', PetsController.getPetById);
 router.put('/pet/:petId/save', verifyToken, PetsController.savePet); 
 router.delete('/pet/:petId/remove', verifyToken, PetsController.removePet); 
-router.post('/pet/adopt/:petId', verifyToken, isPetAvailable, PetsController.adoptOrFoster); 
-router.post('/pet/return/:petId', verifyToken, PetsController.returnPet);
+router.put(
+    '/pet/adopt/:petId', 
+    verifyToken, 
+    verifyPetStatus, 
+    PetsController.adoptOrFoster
+); 
+router.put('/pet/return/:petId', verifyToken, PetsController.returnPet);
  
 router.put(
     '/:userId/:petId', 

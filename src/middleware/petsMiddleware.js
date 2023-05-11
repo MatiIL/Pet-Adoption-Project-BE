@@ -24,7 +24,7 @@ function filterPetSearch(req, res, next) {
   next();
 }
 
-async function isPetAvailable(req, res, next) {
+async function verifyPetStatus(req, res, next) {
   try {
     const { petId } = req.params;
     const { action } = req.body;
@@ -41,4 +41,4 @@ async function isPetAvailable(req, res, next) {
   }
 }
 
-module.exports = { filterPetSearch, isPetAvailable };
+module.exports = { filterPetSearch, verifyPetStatus };

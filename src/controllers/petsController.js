@@ -8,7 +8,13 @@ const {
   setPetAvailableModel,
   editPetModel,
 } = require("../models/petsModel");
-const { ownPetModel, returnPetModel, savePetModel, unsavePetModel } = require("../models/usersModel");
+const {
+  doesUserOwnPetModel,
+  ownPetModel,
+  returnPetModel,
+  savePetModel,
+  unsavePetModel,
+} = require("../models/usersModel");
 
 async function addPet(req, res) {
   try {
@@ -56,7 +62,7 @@ async function savePet(req, res) {
     res.status(500).send(err.message);
   }
 }
-  
+
 async function removePet(req, res) {
   try {
     const petId = req.params.petId;
@@ -70,30 +76,41 @@ async function removePet(req, res) {
     res.status(500).send(err.message);
   }
 }
-  
 
 async function adoptOrFoster(req, res) {
   try {
     const { userId, action, petId } = req.body;
-    const petOwned = await ownPetModel(petId, userId);
-    if (petOwned.error) {
-      throw new Error(petOwned.error);
-    }
 
     if (action === "Foster") {
-      const petFostered = await setPetFosteredModel(petId);
+      const petOwned = await ownPetModel(petId, userId);
+      if (petOwned.error) {
+        throw new Error(petOwned.error);
+      } else res.status(200).send({ ok: true });
+
+      const petFostered = await setPetFosteredModel(petId, userId);
       if (petFostered.error) {
         throw new Error(petFostered.error);
       }
     }
-    
+
     if (action === "Adopt") {
-      const petAdopted = await setPetAdoptedModel(petId);
-      if (petAdopted.error) {
-        throw new Error(petAdopted.error);
+      const isFostererAdopting = await doesUserOwnPetModel(userId, petId);
+      if (isFostererAdopting.error) {
+        throw new Error(isFostererAdopting.error);
+      } else if (isFostererAdopting) {
+        const petAdopted = await setPetAdoptedModel(petId, userId);
+        if (petAdopted.error) {
+          throw new Error(petAdopted.error);
+        } else res.status(200).send({ ok: true });
+        return;
+      } else {
+        const petOwned = await ownPetModel(petId, userId);
+        if (petOwned.error) throw new Error(petOwned.error);
+        const petAdopted = await setPetAdoptedModel(petId, userId);
+        if (petAdopted.error) throw new Error(petAdopted.error);
+        res.status(200).send({ ok: true }); 
       }
     }
-
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message);
@@ -111,7 +128,7 @@ async function returnPet(req, res) {
     const removePetFromUser = await returnPetModel(petId, userId);
     if (removePetFromUser.error) {
       throw new Error(removePetFromUser.error);
-    }
+    } else res.status(200).send({ ok: true });
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message);

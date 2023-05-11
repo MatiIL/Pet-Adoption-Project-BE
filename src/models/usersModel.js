@@ -30,6 +30,18 @@ async function savePetModel(petId, userId) {
   }
 }
 
+async function doesUserOwnPetModel(userId, petId) {
+  try {
+    const user = await User.findById(userId);
+    const doesUserOwnPet = (user.ownedPets).find(item => item === petId);
+    if (doesUserOwnPet === undefined) {
+      return true;
+    } else return false;
+  } catch (err) {
+    console.log(err.message);
+  }
+}
+
 async function ownPetModel(petId, userId) {
   try {
     const ownedPet = await User.updateOne(
@@ -104,6 +116,7 @@ module.exports = {
   signUpModel,
   getUserByEmailModel,
   savePetModel,
+  doesUserOwnPetModel,
   ownPetModel,
   returnPetModel,
   unsavePetModel, 

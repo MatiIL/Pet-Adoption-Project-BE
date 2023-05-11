@@ -133,60 +133,6 @@ async function didPassChange(req, res, next) {
   }
 }
 
-// async function isAdmin(req, res, next) {
-//   const { userId } = req.body.user;
-//   try {
-//     const isUser = await queryRolesDB(userId);
-//     if (isUser === undefined) {
-//       req.body.isAdmin = false;
-//       next();
-//       return;
-//     } else {
-//       req.body.isAdmin = isUser.admin;
-//       next();
-//     }
-//   } catch (err) {
-//     err.statusCode = 500;
-//     next(err);
-//   }
-// }
-
-// async function authAdmin(req, res, next) {
-//   const { userId } = req.body;
-//   try {
-//     const isUser = await queryRolesDB(userId);
-//     if (isUser === undefined) {
-//       req.body.isAdmin = false;
-//       next();
-//       return;
-//     } else {
-//       req.body.isAdmin = isUser.admin;
-//       next();
-//     }
-//   } catch (err) {
-//     err.statusCode = 500;
-//     next(err);
-//   }
-// }
-
-// async function getUserPets(req, res, next) {
-//   try {
-//     const { userId } = req.body;
-//     if (userId) {
-//       const allUserPets = await getUserPetsModel(userId);
-//       req.body.userPets = allUserPets;
-//       next();
-//       if (allUserPets.error) {
-//         throw new Error(allUserPets.error);
-//       }
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).send(err.message);
-//     next();
-//   }
-// }
-
 async function isReqAuthorized(req, res, next) {
   let userId;
   if (req.body.userId) {
