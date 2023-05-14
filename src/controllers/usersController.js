@@ -61,7 +61,7 @@ async function authUser(req, res) {
     const { userId } = req.body;
     const user = await getUserByIdModel(userId);
     res.send({
-      id: userId,
+      _id: userId,
       isAdmin: user.isAdmin,
       firstName: user.firstName,
       email: user.email,
