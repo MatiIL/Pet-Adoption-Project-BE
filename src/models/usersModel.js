@@ -34,7 +34,7 @@ async function doesUserOwnPetModel(userId, petId) {
   try {
     const user = await User.findById(userId);
     const doesUserOwnPet = (user.ownedPets).find(item => item === petId);
-    if (doesUserOwnPet === undefined) {
+    if (doesUserOwnPet !== undefined) {
       return true;
     } else return false;
   } catch (err) {
